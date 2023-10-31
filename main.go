@@ -58,10 +58,16 @@ func child(args []string) {
 		panic(err)
 	}
 
+	if err = syscall.Chroot("alpine/"); err != nil {
+		panic(err)
+	}
+
+	if err = syscall.Chdir("/"); err != nil {
+		panic(err)
+	}
+
 	err = cmd.Run()
 	if err != nil {
 		panic(err)
 	}
 }
-
-
