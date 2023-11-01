@@ -20,4 +20,8 @@ sudo apt install debootstrap
 sudo debootstrap jammy ./ubuntu-rootfs http://archive.ubuntu.com/ubuntu/
 ```
 
+stress mem and cpu
 
+```bash
+./stress --vm 1 --vm-bytes 100M
+```

@@ -11,6 +11,18 @@ import (
 	"strconv"
 )
 
+
+type limits struct {
+	Limits []limit
+}
+
+type limit struct {
+	name string
+	path string
+	param string
+	value []byte
+}
+
 func main() {
 	runCmd := flag.NewFlagSet("run", flag.ExitOnError)
 
@@ -89,60 +101,105 @@ func child(args []string) {
 }
 
 func cgroup() (error){
-	cgroup := "/sys/fs/cgroup"
-	pids := filepath.Join(cgroup, "pids")
-	os.Mkdir(filepath.Join(pids, "container"), 0755)
 
-	err := ioutil.WriteFile(filepath.Join(pids, "container/pids.max"), []byte("20"), 0700)
-	if err != nil {
-		return err
+	cgrouplimits := limits {
+		[]limit{
+			{
+				"pids", 
+				"/sys/fs/cgroup/pids/container",
+				"pids.max",
+				[]byte("20"),
+			},
+			{
+				"memory",
+				"/sys/fs/cgroup/memory/container",
+				"memory.limit_in_bytes",
+				[]byte("1000000"),
+
+			},
+			{
+				"cpu",
+				"/sys/fs/cgroup/cpu/container",
+				"cpu.shares",
+				[]byte("512"),
+			},
+		},
 	}
 
-	err = ioutil.WriteFile(filepath.Join(pids, "container/cgroup.procs"), []byte(strconv.Itoa(os.Getpid())), 0700)
-	if err != nil {
-		return err
+	for _, l := range cgrouplimits.Limits {
+		fmt.Println(filepath.Join(l.path,l.param))
+		//os.Mkdir
+		os.Mkdir(l.path, 0755)
+		//Create cgroup limit
+		err := ioutil.WriteFile(filepath.Join(l.path,l.param), l.value, 0700)
+		if err != nil {
+			return err
+		}
+		//ioutil.WriteFile (add proc to cgroup)
+		err = ioutil.WriteFile(filepath.Join(l.path, "cgroup.procs"), []byte(strconv.Itoa(os.Getpid())), 0700)
+		if err != nil {
+			return err
+		}
+		//ioutil.WriteFile notify_on-release
+		err = ioutil.WriteFile(filepath.Join(l.path, "notify_on_release"), []byte("1"), 0700)
+		if err != nil {
+			return err
+		}
 	}
 
-	mem := filepath.Join(cgroup, "memory")
-	os.Mkdir(filepath.Join(mem, "container"), 0755)
+	//pids := filepath.Join(cgroup, "pids")
+	//os.Mkdir(filepath.Join(pids, "container"), 0755)
 
-	err = ioutil.WriteFile(filepath.Join(mem, "container/memory.limit_in_bytes"), []byte("1000000"), 0700)
-	if err != nil {
-		return err
-	}
+	//err := ioutil.WriteFile(filepath.Join(pids, "container/pids.max"), []byte("20"), 0700)
+	//if err != nil {
+	//	return err
+	//}
 
-	err = ioutil.WriteFile(filepath.Join(mem, "container/cgroup.procs"), []byte(strconv.Itoa(os.Getpid())), 0700)
-	if err != nil {
-		return nil
-	}
+	//err = ioutil.WriteFile(filepath.Join(pids, "container/cgroup.procs"), []byte(strconv.Itoa(os.Getpid())), 0700)
+	//if err != nil {
+	//	return err
+	//}
 
-	cpu := filepath.Join(cgroup, "cpu")
-	os.Mkdir(filepath.Join(cpu, "container"), 0755)
+	//mem := filepath.Join(cgroup, "memory")
+	//os.Mkdir(filepath.Join(mem, "container"), 0755)
 
-	err = ioutil.WriteFile(filepath.Join(cpu, "container/cpu.shares"), []byte("512"), 0700)
-	if err != nil {
-		return err
-	}
+	//err = ioutil.WriteFile(filepath.Join(mem, "container/memory.limit_in_bytes"), []byte("1000000"), 0700)
+	//if err != nil {
+	//	return err
+	//}
 
-	err = ioutil.WriteFile(filepath.Join(cpu, "container/cgroup.procs"), []byte(strconv.Itoa(os.Getpid())), 0700)
-	if err != nil {
-		return err
-	}
+	//err = ioutil.WriteFile(filepath.Join(mem, "container/cgroup.procs"), []byte(strconv.Itoa(os.Getpid())), 0700)
+	//if err != nil {
+	//	return nil
+	//}
 
-	err = ioutil.WriteFile(filepath.Join(pids, "container/notify_on_release"), []byte("1"), 0700)
-	if err != nil {
-		return err
-	}
+	//cpu := filepath.Join(cgroup, "cpu")
+	//os.Mkdir(filepath.Join(cpu, "container"), 0755)
 
-	err = ioutil.WriteFile(filepath.Join(mem, "container/notify_on_release"), []byte("1"), 0700)
-	if err != nil {
-		return err
-	}
+	//err = ioutil.WriteFile(filepath.Join(cpu, "container/cpu.shares"), []byte("512"), 0700)
+	//if err != nil {
+	//	return err
+	//}
 
-	err = ioutil.WriteFile(filepath.Join(cpu, "container/notify_on_release"), []byte("1"), 0700)
-	if err != nil {
-		return err
-	}
+	//err = ioutil.WriteFile(filepath.Join(cpu, "container/cgroup.procs"), []byte(strconv.Itoa(os.Getpid())), 0700)
+	//if err != nil {
+	//	return err
+	//}
+
+	//err = ioutil.WriteFile(filepath.Join(pids, "container/notify_on_release"), []byte("1"), 0700)
+	//if err != nil {
+	//	return err
+	//}
+
+	//err = ioutil.WriteFile(filepath.Join(mem, "container/notify_on_release"), []byte("1"), 0700)
+	//if err != nil {
+	//	return err
+	//}
+
+	//err = ioutil.WriteFile(filepath.Join(cpu, "container/notify_on_release"), []byte("1"), 0700)
+	//if err != nil {
+	//	return err
+	//}
 
 	return nil
 }
