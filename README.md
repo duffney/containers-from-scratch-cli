@@ -12,3 +12,12 @@ tar xvf alpine.tar.gz
 rm alpine.tar.gz
 touch ALPINE_CONTAINER_ROOT
 ```
+
+Download Ubuntu for chroot:
+
+```bash
+sudo apt install debootstrap
+sudo debootstrap jammy ./ubuntu-rootfs http://archive.ubuntu.com/ubuntu/
+```
+
+
