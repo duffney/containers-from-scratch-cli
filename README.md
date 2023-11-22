@@ -1,6 +1,17 @@
 # containers-from-scratch-cli
-A simple Go CLI that builds Linux containers. Based on Liz Rice's [containers-from-scratch](https://github.com/lizrice/containers-from-scratch/tree/master).
 
+Goal: Write 1 paragraph per day.
+
+**Who is this repo for?** _If you've written a Dockerfile, built an image, run a container and now want to know what's going on under the hood, this repo is for you!_ 
+
+
+Let's run some containers. Or should I say processes. 
+
+> "Containers are just isolated groups of proccess running on a single host" --
+
+
+
+## What's docker build doing?
 
 Download Alpine for chroot:
 

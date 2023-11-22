@@ -2,12 +2,12 @@ package main
 
 import (
 	"fmt"
+	"io/ioutil"
 	"os"
 	"os/exec"
-	"syscall"
 	"path/filepath"
-	"io/ioutil"
 	"strconv"
+	"syscall"
 )
 
 type limits struct {
@@ -15,8 +15,8 @@ type limits struct {
 }
 
 type limit struct {
-	name string
-	path string
+	name  string
+	path  string
 	param string
 	value []byte
 }
@@ -24,13 +24,12 @@ type limit struct {
 func run(args []string) {
 	fmt.Printf("Running %v \n", args)
 
-
 	cmd := exec.Command("/proc/self/exe", append([]string{"child"}, os.Args[2:]...)...)
 	//cmd := exec.Command(os.Args[2], os.Args[3:]...)
 	cmd.Stdin = os.Stdin
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
-	cmd.SysProcAttr = & syscall.SysProcAttr{
+	cmd.SysProcAttr = &syscall.SysProcAttr{
 		Cloneflags: syscall.CLONE_NEWUTS | syscall.CLONE_NEWPID,
 	}
 
@@ -40,10 +39,9 @@ func run(args []string) {
 	}
 }
 
-
 func child(args []string) {
 	fmt.Printf("Running from proc in namespace %v \n", args)
-	
+
 	err := cgroup()
 	if err != nil {
 		panic(err)
@@ -59,7 +57,7 @@ func child(args []string) {
 		panic(err)
 	}
 
-	if err = syscall.Chroot("ubuntu-rootfs/"); err != nil {
+	if err = syscall.Chroot("ubuntu-base2/"); err != nil {
 		panic(err)
 	}
 
@@ -81,12 +79,12 @@ func child(args []string) {
 	}
 }
 
-func cgroup() (error){
+func cgroup() error {
 
-	cgrouplimits := limits {
+	cgrouplimits := limits{
 		[]limit{
 			{
-				"pids", 
+				"pids",
 				"/sys/fs/cgroup/pids/container",
 				"pids.max",
 				[]byte("20"),
@@ -96,7 +94,6 @@ func cgroup() (error){
 				"/sys/fs/cgroup/memory/container",
 				"memory.limit_in_bytes",
 				[]byte("1000000"),
-
 			},
 			{
 				"cpu",
@@ -108,11 +105,11 @@ func cgroup() (error){
 	}
 
 	for _, l := range cgrouplimits.Limits {
-		fmt.Println(filepath.Join(l.path,l.param))
+		fmt.Println(filepath.Join(l.path, l.param))
 		//os.Mkdir
 		os.Mkdir(l.path, 0755)
 		//Create cgroup limit
-		err := ioutil.WriteFile(filepath.Join(l.path,l.param), l.value, 0700)
+		err := ioutil.WriteFile(filepath.Join(l.path, l.param), l.value, 0700)
 		if err != nil {
 			return err
 		}
