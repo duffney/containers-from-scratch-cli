@@ -37,6 +37,8 @@ func createImage(source, target, tag string) error {
 		return nil
 	}
 
+	processedSymlinks := make(map[string]bool)
+
 	return filepath.Walk(source,
 		func(path string, info os.FileInfo, err error) error {
 			if err != nil {
@@ -70,7 +72,12 @@ func createImage(source, target, tag string) error {
 				if err != nil {
 					return fmt.Errorf("failed to read symlink %s: %v", path, err)
 				}
+				
+				if processedSymlinks[link] {
+					return nil
+				}
 
+				processedSymlinks[link] = true
 				header.Linkname = link
 
 				if err := tarWriter.WriteHeader(header); err != nil {

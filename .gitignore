@@ -1,3 +1,7 @@
 /alpine
 /ubuntu-rootfs
 /livestream/ubuntu-rootfs
+/playground/ubuntu-rootfs
+/playground/playground/ubuntu-base-22.04-base-amd64.tar.gz
+/playground/example
+/playground/example.tar.gz

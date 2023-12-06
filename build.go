@@ -91,7 +91,7 @@ func build(tag, path string) {
 				}
 
 				// extract rootfs from distro archive
-				extract(filePath, tempDir)
+
 
 				// remove distro archive, prevent from including in container archive
 				err = os.Remove(filePath)

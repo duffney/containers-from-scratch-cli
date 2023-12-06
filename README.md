@@ -1,13 +1,22 @@
 # containers-from-scratch-cli
 
-Goal: Write 1 paragraph per day.
+**Who is this repo for?** If you've written a Dockerfile, built an image, run a container and now want to know what's going on under the hood, this repo is for you! 
 
-**Who is this repo for?** _If you've written a Dockerfile, built an image, run a container and now want to know what's going on under the hood, this repo is for you!_ 
+In this repo, is a Go CLI that mimic the Docker run and build commands. After building the cli and executing its commands, I encourage you to poke around the code base or watch the livestreams to indulge your curiosity about how containers work. :)
+
+Step 1: Build the containerCLI
+
+```bash
+go build . -o containercli
+```
+
+Step 2: Run a container with
 
 
-Let's run some containers. Or should I say processes. 
+A few notes:
+- Container isolation is achieved by the use of a Linux Kernel feature called Namespaces.
+- Resource constraint is achieved by the use of cgroups.
 
-> "Containers are just isolated groups of proccess running on a single host" --
 
 
 

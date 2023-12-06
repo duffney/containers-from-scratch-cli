@@ -10,8 +10,8 @@ import (
 )
 
 func main() {
-	src := "ubuntu-base-22.04-base-amd64.tar.gz"
-	dest := "ubuntu-rootfs"
+	src := "example.tar.gz"
+	dest := "example"
 
 	err := extract(src, dest)
 	if err != nil {
@@ -72,7 +72,7 @@ func extract(src, dest string) error {
 				return fmt.Errorf("Error copying file contents: %v", err)
 			}
 		case tar.TypeSymlink: // if a symlink, create it
-			err := os.Symlink(header.Linkname, extractPath)
+			_ = os.Symlink(header.Linkname, extractPath)
 			if err != nil {
 				return fmt.Errorf("Failed to create symbolic link: %v", err)
 			}
