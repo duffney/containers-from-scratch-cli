@@ -2,14 +2,16 @@ package main
 
 import (
 	"context"
-	"os"
 	"fmt"
+	"os"
+
 	"github.com/mholt/archiver/v4"
 )
 
 func main() {
 	files, err := archiver.FilesFromDisk(nil, map[string]string{
-		"ubuntu-rootfs/": "",
+		"fileToArchive": "",
+		"cmds.go":       "",
 	})
 
 	if err != nil {
@@ -23,23 +25,29 @@ func main() {
 
 	defer out.Close()
 
-	format := archiver.CompressedArchive {
+	format := archiver.CompressedArchive{
 		Compression: archiver.Gz{},
-		Archival: archiver.Tar{},
+		Archival:    archiver.Tar{},
 	}
 
 	err = format.Archive(context.Background(), out, files)
 	if err != nil {
 		fmt.Println(err)
-	} 
-	
+	}
+
+	file, err := os.Open("example.tar.gz")
+	if err != nil {
+		fmt.Println(err)
+	}
+	defer file.Close()
+
 	handler := func(ctx context.Context, f archiver.File) error {
+		fmt.Println(f.Name())
 		return nil
 	}
-	
-	format.Extract(context.Background(), out, nil, handler)
+
+	err = format.Extract(context.Background(), file, nil, handler)
 	if err != nil {
 		fmt.Println(err)
 	}
 }
-

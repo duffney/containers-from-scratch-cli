@@ -18,6 +18,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"github.com/mholt/archiver/v3"
 )
 
 func build(tag, path string) {
@@ -90,7 +91,12 @@ func build(tag, path string) {
 					return
 				}
 
-				// extract rootfs from distro archive
+				// TODO: extract rootfs from distro archive
+				err = archiver.Unarchive(filePath, tempDir)
+				if err != nil {
+					fmt.Println("error unarchiving distro:", err)
+					return
+				}
 
 
 				// remove distro archive, prevent from including in container archive
@@ -143,5 +149,11 @@ func build(tag, path string) {
 	}
 
 	// create container archive
-	createImage(tempDir, curDir, tag)
+	//createImage(tempDir, curDir, tag)
+	imagePath := filepath.Join(curDir,tag+".tar.gz")	
+	err = archiver.Archive([]string{tempDir+"/"},imagePath)
+	if err != nil {
+		fmt.Println("error archiving image:", err)
+		return
+	}
 }

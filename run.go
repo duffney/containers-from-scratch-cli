@@ -57,7 +57,7 @@ func child(args []string) {
 		panic(err)
 	}
 
-	if err = syscall.Chroot("ubuntu-base2/"); err != nil {
+	if err = syscall.Chroot("ubuntu-rootfs/"); err != nil {
 		panic(err)
 	}
 

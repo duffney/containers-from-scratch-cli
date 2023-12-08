@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"flag"
 	"os"
+	"github.com/mholt/archiver/v3"
 )
 
 func main() {
@@ -33,7 +34,12 @@ func main() {
 		extractCmd := flag.NewFlagSet("extract", flag.ExitOnError)
 		extractCmd.Parse(os.Args[2:])
 		arg := extractCmd.Args()[0]
-		extract(arg,"ubuntu-rootfs")
+		//extract(arg,"ubuntu-rootfs")
+		err := archiver.Unarchive(arg,"ubuntu-rootfs")
+		if err != nil {
+			fmt.Printf("Error extracting archive %s", arg)
+			os.Exit(1)
+		}
 	default:
 		fmt.Printf("invalid subcommand %s", os.Args[1])
 		os.Exit(1)
